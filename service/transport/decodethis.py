@@ -1,18 +1,25 @@
 from .base import BaseTransport
+from .exceptions import *
 import requests
 
 
 class DecodeThisTransport(BaseTransport):
     def lunch_request(self):
+        r = False
         try:
-            r = requests.get(self.address, self.payload)
+            r = requests.get(self.url, self.payload)
             r.raise_for_status()
-        except requests.exceptions.RequestException as err:
-            raise err
+        except requests.exceptions.RequestException:
+            pass
 
         res = r.json()
 
-        if res['decode']['status'] != "SUCCESS":
-            raise Exception("Third party exception: %s" % res['decode']['status'])
+        if res['decode']['status'] == 'SUCCESS':
+            return res
 
-        return res
+        if res['decode']['status'] == "NOTFOUND":
+            raise NotFoundException(res['decode']['status'])
+        elif res['decode']['status'] == "SECERR":
+            raise UnauthorizedException()
+        else:
+            raise InternalServerErrorException(res['decode']['status'])

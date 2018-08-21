@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 class Vehicle(models.Model):
-    vin = models.CharField(max_length=17, unique=True)
+    vin = models.CharField(max_length=17, unique=True, blank=False)
     year = models.IntegerField()
     make = models.CharField(max_length=100)
     model = models.CharField(max_length=100)
@@ -22,14 +22,17 @@ class Vehicle(models.Model):
         try:
             record = Vehicle.objects.get(vin=vin)
             return record
-        except models.ObjectDoesNotExist as e:
+        except models.ObjectDoesNotExist:
             pass
-        transport = DecodeThisTransport(settings.DECODE_THIS_URL %
-                                        (
-                                            vin,
-                                            settings.DECODE_API_KEY,
-                                            settings.DECODE_THIS_JSON_FORMAT
-                                        ), [])
+
+
+        generated_url = settings.DECODE_THIS_URL % (
+            vin,
+            settings.DECODE_API_KEY,
+            settings.DECODE_THIS_JSON_FORMAT
+        )
+
+        transport = DecodeThisTransport(generated_url, [])
 
         data = transport.lunch_request()
         vehicle_dict = DecodeThisDecoder(data).run()

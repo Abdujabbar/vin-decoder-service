@@ -3,20 +3,20 @@ from django.core.validators import URLValidator
 
 
 class BaseTransport:
-    address = ""
+    url = ""
     payload = []
-    def __init__(self, address, payload):
-        if not (type(address) is str) or len(address) == 0:
-            raise Exception("address must be a string, and cannot be empty")
+    def __init__(self, url, payload):
+        if not (type(url) is str) or len(url) == 0:
+            raise ValueError("url address must be a string, and cannot be empty")
 
         if not (type(payload) is list):
-            raise Exception("params must be instance of list")
+            raise ValueError("params must be instance of list")
 
         url_validator = URLValidator()
 
-        url_validator(address)
+        url_validator(url)
 
-        self.address = address
+        self.url = url
         self.payload = payload
 
     @abstractmethod
