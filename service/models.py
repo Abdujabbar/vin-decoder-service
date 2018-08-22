@@ -1,8 +1,8 @@
 from django.db import models
 from .transport.decodethis import DecodeThisTransport
 from .decoder.decodethis import *
-from django.conf import settings
 from .helpers import *
+
 
 class Vehicle(models.Model):
     vin = models.CharField(max_length=17, unique=True, blank=False)

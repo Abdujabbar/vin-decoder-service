@@ -29,8 +29,9 @@ class DecodeThisDecoder(BaseDecoder):
             if equipment['name'] in self.color_keys:
                 result['color'] += equipment['value']
             elif equipment['name'] in self.dimension_keys:
-                result['dimensions'] += equipment['name'] + ':' + str(equipment['value']) + ' ' + equipment[
-                    'unit'] + ';'
+                result['dimensions'] += equipment['name'] + ':' \
+                                        + str(equipment['value']) + ' ' + equipment['unit'] + ';'
+
             elif equipment['name'] in self.weight_keys:
                 result['weight'] = equipment['value']
 

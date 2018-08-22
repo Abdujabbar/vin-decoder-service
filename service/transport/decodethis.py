@@ -23,4 +23,3 @@ class DecodeThisTransport(BaseTransport):
             raise NotFoundException()
         else:
             raise InternalServerErrorException()
-

@@ -1,7 +1,7 @@
-
 class NotFoundException(Exception):
     def __str__(self):
         return "NOTFOUND"
+
 
 class InternalServerErrorException(Exception):
     pass
@@ -9,6 +9,7 @@ class InternalServerErrorException(Exception):
 
 class UnauthorizedException(Exception):
     pass
+
 
 class UnexpectedException(Exception):
     pass

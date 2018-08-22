@@ -1,4 +1,2 @@
-
-
 class BaseDecodeException(Exception):
     pass
