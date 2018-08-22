@@ -1,7 +1,7 @@
 Vin decoder service
 =====================================
 
-Simple vin decoder service uses decodethis as third party service and stores found data to postgres database.
+Simple vin decoder service uses <https://www.decodethis.com> as third party service and stores found data to postgres database.
 
 
 Running
