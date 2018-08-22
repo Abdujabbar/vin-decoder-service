@@ -2,7 +2,7 @@ from django.db import models
 from .transport.decodethis import DecodeThisTransport
 from .decoder.decodethis import *
 from django.conf import settings
-
+from .helpers import *
 
 class Vehicle(models.Model):
     vin = models.CharField(max_length=17, unique=True, blank=False)
@@ -18,22 +18,17 @@ class Vehicle(models.Model):
         return self.vin
 
     @staticmethod
-    def get_or_create(vin):
+    def find_or_create(vin):
         try:
             record = Vehicle.objects.get(vin=vin)
             return record
         except models.ObjectDoesNotExist:
-            pass
 
+            generated_url = gen_decode_this_url(vin, settings.DECODE_API_KEY, settings.DECODE_THIS_JSON_FORMAT)
 
-        generated_url = settings.DECODE_THIS_URL % (
-            vin,
-            settings.DECODE_API_KEY,
-            settings.DECODE_THIS_JSON_FORMAT
-        )
+            transport = DecodeThisTransport(generated_url, [])
+            data = transport.lunch_request()
 
-        transport = DecodeThisTransport(generated_url, [])
+            vehicle_dict = DecodeThisDecoder(data).run()
 
-        data = transport.lunch_request()
-        vehicle_dict = DecodeThisDecoder(data).run()
-        return Vehicle.objects.create(**vehicle_dict)
+            return Vehicle.objects.create(**vehicle_dict)

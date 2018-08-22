@@ -4,9 +4,10 @@ from django.test import TestCase
 from .transport.decodethis import DecodeThisTransport
 from .transport.exceptions import *
 from .decoder.decodethis import *
-from django.conf import settings
+from .decoder.exceptions import *
 from django.db import models
 from .models import Vehicle
+from .helpers import *
 
 
 class DecodeThisTransportTest(unittest.TestCase):
@@ -19,31 +20,23 @@ class DecodeThisTransportTest(unittest.TestCase):
         self.assertRaises(ValidationError, DecodeThisTransport, url="adsadsa", payload=[])
 
     def test_not_found_exception(self):
-        url = settings.DECODE_THIS_URL % (
-            self.invalid_vin,
-            settings.DECODE_API_KEY,
-            settings.DECODE_THIS_JSON_FORMAT
-        )
+        url = gen_decode_this_url(self.invalid_vin, settings.DECODE_API_KEY,
+                                  settings.DECODE_THIS_JSON_FORMAT)
         transport = DecodeThisTransport(url, [])
         with self.assertRaises(NotFoundException):
             transport.lunch_request()
 
     def test_unauthorized_exception(self):
-        url = settings.DECODE_THIS_URL % (
-            self.real_vin,
-            "dsadsada",
-            settings.DECODE_THIS_JSON_FORMAT
-        )
+        url = gen_decode_this_url(self.real_vin, "dsadsadsa",
+                                  settings.DECODE_THIS_JSON_FORMAT)
         transport = DecodeThisTransport(url, [])
         with self.assertRaises(UnauthorizedException):
             transport.lunch_request()
 
     def test_internal_error_exception(self):
-        url = settings.DECODE_THIS_URL % (
-            "543543543543543",
-            settings.DECODE_API_KEY,
-            settings.DECODE_THIS_JSON_FORMAT
-        )
+        url = gen_decode_this_url("543543543543543", settings.DECODE_API_KEY,
+                                  settings.DECODE_THIS_JSON_FORMAT)
+
         transport = DecodeThisTransport(url, [])
         with self.assertRaises(InternalServerErrorException):
             transport.lunch_request()
@@ -52,11 +45,11 @@ class DecodeThisTransportTest(unittest.TestCase):
 class VehicleModelTest(TestCase):
     real_vin = "JT3GM84R2W0031533"
 
-    def test_get_or_create(self):
+    def test_find_or_create(self):
         with self.assertRaises(models.ObjectDoesNotExist):
             Vehicle.objects.get(vin=self.real_vin)
 
-        record = Vehicle.get_or_create(vin=self.real_vin)
+        record = Vehicle.find_or_create(vin=self.real_vin)
         self.assertTrue(isinstance(record, Vehicle))
 
         stored_record = Vehicle.objects.get(vin=self.real_vin)
@@ -64,26 +57,21 @@ class VehicleModelTest(TestCase):
         self.assertEqual(stored_record, record)
 
 
-
 class DecodeThisDecoderTest(TestCase):
     real_vin = "JF2SJAKC0FH514820"
+
     def test_invalid_args(self):
         args = {}
         self.assertRaises(BaseDecodeException, DecodeThisDecoder, args=args)
 
     def test_decode(self):
-        url = settings.DECODE_THIS_URL % (
-            self.real_vin,
-            settings.DECODE_API_KEY,
-            settings.DECODE_THIS_JSON_FORMAT
-        )
+        url = gen_decode_this_url(self.real_vin, settings.DECODE_API_KEY,
+                                  settings.DECODE_THIS_JSON_FORMAT)
         transport = DecodeThisTransport(url, [])
 
         try:
             data = transport.lunch_request()
-            decoder = DecodeThisDecoder(data)
-
+            decoder = DecodeThisDecoder(data).run()
             self.assertEqual(decoder['vin'], self.real_vin)
-
         except Exception as e:
             print(e)

@@ -10,3 +10,5 @@ class InternalServerErrorException(Exception):
 class UnauthorizedException(Exception):
     pass
 
+class UnexpectedException(Exception):
+    pass

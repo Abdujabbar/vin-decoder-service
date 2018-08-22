@@ -9,7 +9,7 @@ from .models import Vehicle
 @api_view(['GET'])
 def index(request, vin):
     try:
-        serializer = VehicleSerializer(Vehicle().get_or_create(vin))
+        serializer = VehicleSerializer(Vehicle().find_or_create(vin))
         return Response({
             "success": True,
             "vehicle": serializer.data,
@@ -33,4 +33,4 @@ def index(request, vin):
         return Response({
             "success": False,
             "error": str(e)
-        })
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
