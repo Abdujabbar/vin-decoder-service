@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import VehicleSerializer
-from .transport.exceptions import NotFoundException, UnauthorizedException, InternalServerErrorException
+from .transport.exceptions import NotFoundException, UnauthorizedException
 from rest_framework import status
 from .models import Vehicle
 
@@ -14,14 +14,13 @@ def index(request, vin):
             "success": True,
             "vehicle": serializer.data,
         })
-    except (NotFoundException, UnauthorizedException, InternalServerErrorException, Exception) as e:
-
-        response_status = status.HTTP_401_UNAUTHORIZED
+    except Exception as e:
+        response_status = status.HTTP_500_INTERNAL_SERVER_ERROR
 
         if isinstance(e, NotFoundException):
             response_status = status.HTTP_404_NOT_FOUND
-        else:
-            response_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+        elif isinstance(e, UnauthorizedException):
+            response_status = status.HTTP_401_UNAUTHORIZED
 
         return Response({
             "success": False,
