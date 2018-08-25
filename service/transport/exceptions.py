@@ -1,6 +1,5 @@
 class NotFoundException(Exception):
-    def __str__(self):
-        return "NOTFOUND"
+    pass
 
 
 class InternalServerErrorException(Exception):

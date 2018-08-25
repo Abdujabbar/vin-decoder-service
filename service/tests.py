@@ -2,12 +2,13 @@ from django.core.exceptions import ValidationError
 import unittest
 from django.test import TestCase
 from .transport.decodethis import DecodeThisTransport
-from .transport.exceptions import *
-from .decoder.decodethis import *
-from .decoder.exceptions import *
+from .transport.exceptions import NotFoundException, UnauthorizedException, InternalServerErrorException
+from .decoder.decodethis import DecodeThisDecoder
+from .decoder.exceptions import BaseDecodeException
 from django.db import models
 from .models import Vehicle
-from .helpers import *
+from django.conf import settings
+from .helpers import gen_decode_this_url
 
 
 class DecodeThisTransportTest(unittest.TestCase):

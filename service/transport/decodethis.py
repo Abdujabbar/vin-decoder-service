@@ -1,5 +1,8 @@
 from .base import BaseTransport
-from .exceptions import *
+from .exceptions import UnauthorizedException, \
+                        NotFoundException, \
+                        InternalServerErrorException, \
+                        UnexpectedException
 import requests
 from rest_framework import status
 
@@ -20,6 +23,6 @@ class DecodeThisTransport(BaseTransport):
         if res['decode']['status'] == 'SUCCESS':
             return res
         elif res['decode']['status'] == 'NOTFOUND':
-            raise NotFoundException()
+            raise NotFoundException(res['decode']['status'])
         else:
-            raise InternalServerErrorException()
+            raise InternalServerErrorException(res['decode']['status'])

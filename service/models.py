@@ -1,7 +1,8 @@
 from django.db import models
 from .transport.decodethis import DecodeThisTransport
-from .decoder.decodethis import *
-from .helpers import *
+from .decoder.decodethis import DecodeThisDecoder
+from django.conf import settings
+from .helpers import gen_decode_this_url
 
 
 class Vehicle(models.Model):
