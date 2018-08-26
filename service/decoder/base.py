@@ -23,7 +23,8 @@ class BaseDecoder(ABC):
         """
         pass
 
-    def make_an_empty_result(self):
+    @staticmethod
+    def make_an_empty_result():
         return dict(
             year="",
             model="",
