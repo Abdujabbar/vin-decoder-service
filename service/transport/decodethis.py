@@ -8,7 +8,8 @@ from rest_framework import status
 
 
 class DecodeThisTransport(BaseTransport):
-    def lunch_request(self):
+
+    def launch_request(self):
         r = False
         try:
             r = requests.get(self.url, self.payload)

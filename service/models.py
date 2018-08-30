@@ -23,12 +23,16 @@ class Vehicle(models.Model):
         try:
             record = Vehicle.objects.get(vin=vin)
             return record
-        except models.ObjectDoesNotExist:
+        except Vehicle.DoesNotExist:
 
-            generated_url = gen_decode_this_url(vin, settings.DECODE_API_KEY, settings.DECODE_THIS_JSON_FORMAT)
+            generated_url = gen_decode_this_url(
+                vin,
+                settings.DECODE_API_KEY,
+                settings.DECODE_THIS_JSON_FORMAT
+            )
 
             transport = DecodeThisTransport(generated_url, [])
-            data = transport.lunch_request()
+            data = transport.launch_request()
 
             vehicle_dict = DecodeThisDecoder(data).run()
 

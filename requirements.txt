@@ -3,3 +3,4 @@ psycopg2
 djangorestframework
 requests
 django-rest-swagger
+flake8

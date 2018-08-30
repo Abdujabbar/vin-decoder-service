@@ -8,7 +8,9 @@ class BaseTransport:
 
     def __init__(self, url, payload):
         if not (type(url) is str) or len(url) == 0:
-            raise ValueError("url address must be a string, and cannot be empty")
+            raise ValueError(
+                "url address must be a string, and cannot be empty"
+            )
 
         if not (type(payload) is list):
             raise ValueError("params must be instance of list")
@@ -21,5 +23,5 @@ class BaseTransport:
         self.payload = payload
 
     @abstractmethod
-    def lunch_request(self):
+    def launch_request(self):
         pass

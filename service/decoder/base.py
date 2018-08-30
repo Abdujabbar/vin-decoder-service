@@ -18,7 +18,8 @@ class BaseDecoder(ABC):
     @abstractmethod
     def run(self):
         """
-        Method will filling up an empty result of dictionary which generated in method make_an_empty_result
+        Method will filling up an empty result of dictionary
+        which generated in method make_an_empty_result
         :return dict:
         """
         pass

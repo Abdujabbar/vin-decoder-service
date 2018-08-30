@@ -13,7 +13,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Vehicle',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.AutoField(
+                    auto_created=True,
+                    primary_key=True,
+                    serialize=False,
+                    verbose_name='ID'
+                )),
                 ('vin', models.CharField(max_length=17, unique=True)),
                 ('year', models.IntegerField()),
                 ('make', models.CharField(max_length=100)),

@@ -7,12 +7,14 @@ from .models import Vehicle
 
 
 @api_view(['GET'])
-def index(request, vin):
+def vehicle_by_vin(request, vin):
     try:
         serializer = VehicleSerializer(Vehicle().find_or_create(vin))
         return Response({
-            "success": True,
-            "vehicle": serializer.data,
+            "status": "success",
+            "data": {
+                "vehicle": serializer.data
+            },
         })
     except Exception as e:
         response_status = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -23,6 +25,6 @@ def index(request, vin):
             response_status = status.HTTP_401_UNAUTHORIZED
 
         return Response({
-            "success": False,
-            "error": str(e)
+            "status": "error",
+            "message": str(e)
         }, status=response_status)
