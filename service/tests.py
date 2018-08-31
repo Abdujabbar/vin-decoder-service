@@ -1,64 +1,9 @@
-from django.core.exceptions import ValidationError
-import unittest
 from django.test import TestCase
-from .transport.decodethis import DecodeThisTransport
-from .transport.exceptions \
-    import NotFoundException, \
-    UnauthorizedException, \
-    InternalServerErrorException
 from .decoder.decodethis import DecodeThisDecoder
-from .decoder.exceptions import BaseDecodeException
 from django.db import models
 from .models import Vehicle
 from django.conf import settings
 from .helpers import gen_decode_this_url
-
-
-class DecodeThisTransportTest(unittest.TestCase):
-    invalid_vin = "11111"
-    real_vin = "JF2SJAKC0FH514820"
-
-    def test_arguments_validation(self):
-        self.assertRaises(
-            ValueError,
-            DecodeThisTransport,
-            url="",
-            payload=[]
-        )
-        self.assertRaises(
-            ValueError,
-            DecodeThisTransport,
-            url="adsadsa",
-            payload=None
-        )
-        self.assertRaises(
-            ValidationError,
-            DecodeThisTransport,
-            url="adsadsa",
-            payload=[]
-        )
-
-    def test_not_found_exception(self):
-        url = gen_decode_this_url(self.invalid_vin, settings.DECODE_API_KEY,
-                                  settings.DECODE_THIS_JSON_FORMAT)
-        transport = DecodeThisTransport(url, [])
-        with self.assertRaises(NotFoundException):
-            transport.launch_request()
-
-    def test_unauthorized_exception(self):
-        url = gen_decode_this_url(self.real_vin, "dsadsadsa",
-                                  settings.DECODE_THIS_JSON_FORMAT)
-        transport = DecodeThisTransport(url, [])
-        with self.assertRaises(UnauthorizedException):
-            transport.launch_request()
-
-    def test_internal_error_exception(self):
-        url = gen_decode_this_url("543543543543543", settings.DECODE_API_KEY,
-                                  settings.DECODE_THIS_JSON_FORMAT)
-
-        transport = DecodeThisTransport(url, [])
-        with self.assertRaises(InternalServerErrorException):
-            transport.launch_request()
 
 
 class VehicleModelTest(TestCase):
@@ -79,18 +24,11 @@ class VehicleModelTest(TestCase):
 class DecodeThisDecoderTest(TestCase):
     real_vin = "JF2SJAKC0FH514820"
 
-    def test_invalid_args(self):
-        args = {}
-        self.assertRaises(BaseDecodeException, DecodeThisDecoder, args=args)
-
     def test_decode(self):
         url = gen_decode_this_url(self.real_vin, settings.DECODE_API_KEY,
                                   settings.DECODE_THIS_JSON_FORMAT)
-        transport = DecodeThisTransport(url, [])
-
         try:
-            data = transport.launch_request()
-            decoder = DecodeThisDecoder(data).run()
+            decoder = DecodeThisDecoder(url, []).run()
             self.assertEqual(decoder['vin'], self.real_vin)
         except Exception as e:
             print(e)

@@ -1,5 +1,4 @@
 from django.db import models
-from .transport.decodethis import DecodeThisTransport
 from .decoder.decodethis import DecodeThisDecoder
 from django.conf import settings
 from .helpers import gen_decode_this_url
@@ -31,9 +30,6 @@ class Vehicle(models.Model):
                 settings.DECODE_THIS_JSON_FORMAT
             )
 
-            transport = DecodeThisTransport(generated_url, [])
-            data = transport.launch_request()
-
-            vehicle_dict = DecodeThisDecoder(data).run()
+            vehicle_dict = DecodeThisDecoder(generated_url, []).run()
 
             return Vehicle.objects.create(**vehicle_dict)

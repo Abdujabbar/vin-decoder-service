@@ -1,19 +1,26 @@
 from abc import ABC, abstractmethod
+from django.core.validators import URLValidator
 
 
 class BaseDecoder(ABC):
-    def __init__(self, args):
-        self.args = args
+    url = ""
+    payload = []
 
-        self.validate_args()
+    def __init__(self, url, payload):
+        if not (type(url) is str) or len(url) == 0:
+            raise ValueError(
+                "url address must be a string, and cannot be empty"
+            )
 
-    @abstractmethod
-    def validate_args(self):
-        """
-        validates args on init class objects
-        :return:
-        """
-        pass
+        if not (type(payload) is list):
+            raise ValueError("params must be instance of list")
+
+        url_validator = URLValidator()
+
+        url_validator(url)
+
+        self.url = url
+        self.payload = payload
 
     @abstractmethod
     def run(self):
@@ -36,3 +43,10 @@ class BaseDecoder(ABC):
             weight=0,
             dimensions=""
         )
+
+    @abstractmethod
+    def launch_request(self):
+        pass
+
+
+

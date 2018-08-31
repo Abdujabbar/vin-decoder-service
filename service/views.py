@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import VehicleSerializer
-from .transport.exceptions import NotFoundException, UnauthorizedException
+from .decoder.exceptions import NotFoundException, UnauthorizedException
 from rest_framework import status
 from .models import Vehicle
 
