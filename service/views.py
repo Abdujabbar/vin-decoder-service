@@ -1,30 +1,24 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from .serializers import VehicleSerializer
 from .decoder.exceptions import NotFoundException, UnauthorizedException
-from rest_framework import status
 from .models import Vehicle
+from django.http import JsonResponse
 
 
-@api_view(['GET'])
 def vehicle_by_vin(request, vin):
     try:
-        serializer = VehicleSerializer(Vehicle().find_or_create(vin))
-        return Response({
-            "status": "success",
-            "data": {
-                "vehicle": serializer.data
-            },
+        raw = Vehicle().find_or_create(vin)
+        return JsonResponse({
+            "success": True,
+            "data": raw,
         })
     except Exception as e:
-        response_status = status.HTTP_500_INTERNAL_SERVER_ERROR
+        response_code = 500
 
         if isinstance(e, NotFoundException):
-            response_status = status.HTTP_404_NOT_FOUND
+            response_code = 404
         elif isinstance(e, UnauthorizedException):
-            response_status = status.HTTP_401_UNAUTHORIZED
+            response_code = 401
 
-        return Response({
+        return JsonResponse({
             "status": "error",
             "message": str(e)
-        }, status=response_status)
+        }, status=response_code)

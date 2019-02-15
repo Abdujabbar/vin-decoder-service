@@ -1,17 +1,22 @@
 class BaseDecodeException(Exception):
     pass
 
+
 class NotFoundException(Exception):
-    pass
+    def __str__(self):
+        return 'NotFound'
 
 
 class InternalServerErrorException(Exception):
-    pass
+    def __str__(self):
+        return 'Internal Error'
 
 
 class UnauthorizedException(Exception):
-    pass
+    def __str__(self):
+        return 'You are not authorized'
 
 
 class UnexpectedException(Exception):
-    pass
+    def __str__(self):
+        return 'UnexpectedException'
