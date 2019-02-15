@@ -5,10 +5,10 @@ from django.http import JsonResponse
 
 def vehicle_by_vin(request, vin):
     try:
-        raw = Vehicle().find_or_create(vin)
+        vehicle = Vehicle().find_or_create(vin)
         return JsonResponse({
             "success": True,
-            "data": raw,
+            "data": vehicle,
         })
     except Exception as e:
         response_code = 500
